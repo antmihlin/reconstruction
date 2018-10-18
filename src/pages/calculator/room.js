@@ -22,6 +22,7 @@ class Room extends React.Component {
 			wallPaintPrice:null,
 			wallCeramicsPrice:null,
 			ceilingPaintPrice:null,
+			floorMaterialPrice:null,
 			
 			//Work costs
 			floorWorkPrice:null,
@@ -44,14 +45,32 @@ class Room extends React.Component {
 		};
 		
 		this.handleInputChange = this.handleInputChange.bind(this);
+		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 	
 	handleInputChange(event){
 		const target = event.target;
 		const value = target.type === 'checkbox' ? target.checked : target.value;
 		const name = target.name;
-		
+				
 		this.setState( { [name]: value } );
+		
+	}
+	
+	handleSubmit(){
+		
+		const roomArea = this.calcRoomArea( this.state.length, this.state.width);
+		const wallsArea = this.calcWallsArea(this.state.height, this.state.length, this.state.width);
+		
+		this.setState({ wallsArea:wallsArea , roomArea:roomArea },function(){
+			this.calcWallsPrice();
+			this.calcCeilingPrice();
+			this.calcFloorPrice();
+			this.calcRoomTotalPrice();
+		});
+		
+
+		console.log(this.state);
 	}
 	
 	//Calculate areas
@@ -76,21 +95,45 @@ class Room extends React.Component {
 		return cost;
 	}
 	
+	//Calculate walls making price
 	calcWallsPrice(  ){
-		const price = this.calcAreaPaintingPrice( this.state.wallsArea, this.state.paintingPrice, this.state.wallPaintPrice, this.state.stuccoPrice, this.state.plasterPrice  );
-		return this.setState({ wallsPrice: price });
+		let price = this.calcAreaPaintingPrice( this.state.wallsArea, this.state.paintingPrice, this.state.wallPaintPrice, this.state.stuccoPrice, this.state.plasterPrice  );
+		
+		if(this.state.wallCeramics ){
+			price = this.state.roomArea * this.state.wallCeramicsWorkCost + this.state.wallCeramicsPrice *this.state.roomArea;
+		}else{
+			price = this.calcAreaPaintingPrice( this.state.wallsArea, this.state.paintingPrice, this.state.wallPaintPrice, this.state.stuccoPrice, this.state.plasterPrice  );
+		}
+		
+		 this.setState({ wallsPrice: price });
 	}
 	
+	//Calculate ceiling painting cost
 	calcCeilingPrice(){
 		const price = this.calcAreaPaintingPrice( this.state.roomArea, this.state.paintingPrice, this.state.ceilingPaintPrice );
-		return this.setState({ wallsPrice: price });
+		 this.setState({ ceilingPrice: price });
+	}
+	
+	//Calculate floor making cost
+	calcFloorPrice(){
+		const floorPrice = this.state.floorMakingPrice * this.state.roomArea + this.state.floorMaterialPrice * this.state.roomArea;
+		 this.setState({ floorPrice :floorPrice });
 	}
 	
 	calcRoomTotalPrice(){
+		let totalPrice = 0;
+		totalPrice += this.state.wallsPrice;
+		totalPrice += this.state.ceilingPrice;
+		totalPrice += this.state.floorPrice;
 		
+		this.setState({ totalPrice:totalPrice });		
 	}	
 
 	render() {
+			const wallsPrice = this.state.wallsPrice;
+			const ceilingPrice =  this.state.ceilingPrice;
+			const floorPrice =  this.state.floorPrice;
+			const totalPrice =  this.state.totalPrice;		
 		
 		return(
 			<div>
@@ -177,11 +220,17 @@ class Room extends React.Component {
 					  <label htmlFor="ceilingPaintPrice">Ceiling paint Sq.m</label>
 					  <input type="number" className="form-control" onChange={this.handleInputChange} name="ceilingPaintPrice" id="ceilingPaintPrice" aria-describedby="Ceiling paint price" placeholder="Enter ceiling paint price" />
 					  
-				<h4>Work costs</h4>
+				
 					</div>
+					<h4>Work costs</h4>
 					<div className="form-group">
 					  <label htmlFor="paintingPrice">Painting price Sq.m</label>
 					  <input type="number" className="form-control" onChange={this.handleInputChange} name="paintingPrice" id="paintingPrice" aria-describedby="Painting price" placeholder="Enter  painting price" />
+					  
+					</div>
+					<div className="form-group">
+					  <label htmlFor="floorMaterialPrice">Floor material cost Sq.m</label>
+					  <input type="number" className="form-control" onChange={this.handleInputChange} name="floorMaterialPrice" id="floorMaterialPrice" aria-describedby="Floor material price" placeholder="Enter floor material price" />
 					  
 					</div>
 					<div className="form-group">
@@ -210,7 +259,7 @@ class Room extends React.Component {
 					  
 					</div>
 					<div className="form-group">
-					  <label htmlFor="floorMakingPrice">Floor making cost</label>
+					  <label htmlFor="floorMakingPrice">Floor making cost Sq.m</label>
 					  <input type="number" className="form-control" onChange={this.handleInputChange} name="floorMakingPrice" id="floorMakingPrice" aria-describedby="Floor making cost" placeholder="Enter floor making cost" />
 					  
 					</div>
@@ -219,6 +268,14 @@ class Room extends React.Component {
 					  <input type="number" className="form-control" onChange={this.handleInputChange} name="wallCeramicsWorkCost" id="wallCeramicsWorkCost" aria-describedby="Wall ceramics cost" placeholder="Enter wall ceramics cost" />
 					  
 					</div>
+					<button className="btn btn-success" onClick={this.handleSubmit} >Calculate</button>
+				<div>
+					<h4>Result</h4>
+					<p>Walls cost: {wallsPrice} </p>
+					<p>Ceiling painting cost: {ceilingPrice}</p>
+					<p>Floor making cost: {floorPrice}</p>
+					<p><strong>Total:  {totalPrice}</strong></p>
+				</div>
 			</div>
 				);
 	}
