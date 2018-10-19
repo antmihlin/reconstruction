@@ -69,8 +69,6 @@ class Room extends React.Component {
 			this.calcRoomTotalPrice();
 		});
 		
-
-		console.log(this.state);
 	}
 	
 	//Calculate areas
