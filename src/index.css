@@ -8,3 +8,8 @@ and open the template in the editor.
     Author     : Anton
 */
 
+.section_cyan{
+	margin: 4px;
+	padding: 8px;
+	background-color: #EDE7F6;
+}

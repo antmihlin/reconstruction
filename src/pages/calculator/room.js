@@ -15,6 +15,7 @@ class Room extends React.Component {
 			wallCeramics:false,
 			wallConditions:null,
 			floorType:null,
+			waterTubes:null,
 			electricTubes:null,
 			electricWiresReplace:null,
 			
@@ -25,7 +26,6 @@ class Room extends React.Component {
 			floorMaterialPrice:null,
 			
 			//Work costs
-			floorWorkPrice:null,
 			stuccoPrice:null,
 			plasterPrice:null,
 			electricTubesPrice:null,
@@ -53,7 +53,9 @@ class Room extends React.Component {
 		const value = target.type === 'checkbox' ? target.checked : target.value;
 		const name = target.name;
 				
-		this.setState( { [name]: value } );
+		this.setState( { [name]: value },()=>{
+			
+		} );
 		
 	}
 	
@@ -66,7 +68,7 @@ class Room extends React.Component {
 			this.calcWallsPrice();
 			this.calcCeilingPrice();
 			this.calcFloorPrice();
-			this.calcRoomTotalPrice();
+			setTimeout( ()=> this.calcRoomTotalPrice(), 2000 );
 		});
 		
 	}
@@ -84,7 +86,7 @@ class Room extends React.Component {
 	}
 		
 	//Calculate painting costs
-	calcAreaPaintingPrice( area,paintingCost, paintPrice, stuccoPrice=1, plasterPrice=1  ){
+	calcAreaPaintingPrice( area,paintingCost, paintPrice, stuccoPrice=null, plasterPrice=null  ){
 		let cost = ( area * paintingCost + area * paintPrice ) ;
 		
 		if( stuccoPrice ) cost +=( area * stuccoPrice );
@@ -95,15 +97,23 @@ class Room extends React.Component {
 	
 	//Calculate walls making price
 	calcWallsPrice(  ){
-		let price = this.calcAreaPaintingPrice( this.state.wallsArea, this.state.paintingPrice, this.state.wallPaintPrice, this.state.stuccoPrice, this.state.plasterPrice  );
 		
-		if(this.state.wallCeramics ){
-			price = this.state.roomArea * this.state.wallCeramicsWorkCost + this.state.wallCeramicsPrice *this.state.roomArea;
-		}else{
-			price = this.calcAreaPaintingPrice( this.state.wallsArea, this.state.paintingPrice, this.state.wallPaintPrice, this.state.stuccoPrice, this.state.plasterPrice  );
+		let stucco = null;
+		let plaster = null;
+		
+		if( this.state.wallConditions === 'paintStucco' ){
+			stucco = this.state.stuccoPrice;
+		}else if( this.state.wallConditions === 'paintStuccoPlaster' ){
+			plaster = this.state.plasterPrice;
 		}
 		
-		 this.setState({ wallsPrice: price });
+		let price = this.calcAreaPaintingPrice( this.state.wallsArea, this.state.paintingPrice, this.state.wallPaintPrice, stucco, plaster  );
+		
+		if(this.state.wallCeramics ){
+			price += this.state.roomArea * this.state.wallCeramicsWorkCost + this.state.wallCeramicsPrice *this.state.roomArea;
+		}
+		
+		this.setState({ wallsPrice: price });
 	}
 	
 	//Calculate ceiling painting cost
@@ -115,7 +125,7 @@ class Room extends React.Component {
 	//Calculate floor making cost
 	calcFloorPrice(){
 		const floorPrice = this.state.floorMakingPrice * this.state.roomArea + this.state.floorMaterialPrice * this.state.roomArea;
-		 this.setState({ floorPrice :floorPrice });
+		this.setState({ floorPrice :floorPrice });
 	}
 	
 	calcRoomTotalPrice(){
@@ -124,17 +134,26 @@ class Room extends React.Component {
 		totalPrice += this.state.ceilingPrice;
 		totalPrice += this.state.floorPrice;
 		
-		this.setState({ totalPrice:totalPrice });		
+		this.setState({ totalPrice:totalPrice });
 	}	
 
 	render() {
+			const wallCeramics = this.state.wallCeramics;
+			const waterTubes = this.state.waterTubes;
+			const electricTubes = this.state.electricTubes;
+			const electricWiresReplace = this.state.electricWiresReplace;
+		
 			const wallsPrice = this.state.wallsPrice;
 			const ceilingPrice =  this.state.ceilingPrice;
 			const floorPrice =  this.state.floorPrice;
 			const totalPrice =  this.state.totalPrice;		
 		
 		return(
-			<div>
+			<div className="container-fluid">
+			<div className="row">
+			<div className="col-xs-12 col-sm-6 col-md-4">
+			<div className="section_cyan">
+	
 				<h4>Set room parametres</h4>
 					<div className="form-group">
 					  <label htmlFor="roomTitle">Room title</label>
@@ -189,6 +208,10 @@ class Room extends React.Component {
 					</div>
 					
 					<div className="form-group form-check">
+					  <input type="checkbox" className="form-check-input" onChange={this.handleInputChange} name="waterTubes" id="waterTubes"/>
+					  <label className="form-check-label" htmlFor="waterTubes">Water tubes</label>
+					</div>
+					<div className="form-group form-check">
 					  <input type="checkbox" className="form-check-input" onChange={this.handleInputChange} name="electricTubes" id="electricTubes"/>
 					  <label className="form-check-label" htmlFor="electricTubes">Electric tubes</label>
 					</div>
@@ -196,84 +219,111 @@ class Room extends React.Component {
 					  <input type="checkbox" className="form-check-input" onChange={this.handleInputChange} name="electricWiresReplace" id="electricWiresReplace"/>
 					  <label className="form-check-label" htmlFor="electricWiresReplace">Replacment of electric wires</label>
 					</div>
-					
+			</div>
+			</div>
+		
+			<div className="col-xs-12 col-sm-6 col-md-4">	
+			<div className="section_cyan">
 				<h4>Material Prices</h4>
 				
-					<div className="form-group">
-					  <label htmlFor="floorWorkPrice">Floor material price Sq.m</label>
-					  <input type="number" className="form-control" onChange={this.handleInputChange} name="floorWorkPrice" id="floorWorkPrice" aria-describedby="Floor price" placeholder="Enter material price" />
-					  
-					</div>
 					<div className="form-group">
 					  <label htmlFor="wallPaintPrice">Wall paint price Sq.m</label>
 					  <input type="number" className="form-control" onChange={this.handleInputChange} name="wallPaintPrice" id="wallPaintPrice" aria-describedby="Wall paint price" placeholder="Enter wall paint price" />
 					  
 					</div>
-					<div className="form-group">
-					  <label htmlFor="wallCeramicsPrice">Wall ceramics</label>
-					  <input type="number" className="form-control" onChange={this.handleInputChange} name="wallCeramicsPrice" id="wallCeramicsPrice" aria-describedby="Wall ceramics price" placeholder="Enter wall ceramics price" />
-					  
-					</div>
+
 					<div className="form-group">
 					  <label htmlFor="ceilingPaintPrice">Ceiling paint Sq.m</label>
 					  <input type="number" className="form-control" onChange={this.handleInputChange} name="ceilingPaintPrice" id="ceilingPaintPrice" aria-describedby="Ceiling paint price" placeholder="Enter ceiling paint price" />
 					  
 				
 					</div>
+					
+					<div className="form-group">
+					  <label htmlFor="floorMaterialPrice">Floor material cost Sq.m</label>
+					  <input type="number" className="form-control" onChange={this.handleInputChange} name="floorMaterialPrice" id="floorMaterialPrice" aria-describedby="Floor material price" placeholder="Enter floor material price" />
+					  
+					</div>
+					
+					{ wallCeramics &&
+					<div className="form-group">
+					  <label htmlFor="wallCeramicsPrice">Wall ceramics price Sq.m</label>
+					  <input type="number" className="form-control" onChange={this.handleInputChange} name="wallCeramicsPrice" id="wallCeramicsPrice" aria-describedby="Wall ceramics price" placeholder="Enter wall ceramics price" />
+					  
+					</div>
+					}
+				</div>
+			</div>
+					
+				<div className="col-xs-12 col-sm-6 col-md-4">
+				<div className="section_cyan">
 					<h4>Work costs</h4>
 					<div className="form-group">
 					  <label htmlFor="paintingPrice">Painting price Sq.m</label>
 					  <input type="number" className="form-control" onChange={this.handleInputChange} name="paintingPrice" id="paintingPrice" aria-describedby="Painting price" placeholder="Enter  painting price" />
 					  
 					</div>
+
 					<div className="form-group">
-					  <label htmlFor="floorMaterialPrice">Floor material cost Sq.m</label>
-					  <input type="number" className="form-control" onChange={this.handleInputChange} name="floorMaterialPrice" id="floorMaterialPrice" aria-describedby="Floor material price" placeholder="Enter floor material price" />
-					  
-					</div>
-					<div className="form-group">
-					  <label htmlFor="stuccoPrice">Stucco price</label>
+					  <label htmlFor="stuccoPrice">Stucco price Sq.m</label>
 					  <input type="number" className="form-control" onChange={this.handleInputChange} name="stuccoPrice" id="stuccoPrice" aria-describedby="Stucco price" placeholder="Enter stucco price" />
 					  
 					</div>
 					<div className="form-group">
-					  <label htmlFor="plasterPrice">Plaster price</label>
+					  <label htmlFor="plasterPrice">Plaster price Sq.m</label>
 					  <input type="number" className="form-control" onChange={this.handleInputChange} name="plasterPrice" id="plasterPrice" aria-describedby="Plaster price" placeholder="Enter plaster price" />
 					  
 					</div>
+					{ electricTubes &&
 					<div className="form-group">
 					  <label htmlFor="electricTubesPrice">Electric tubing price</label>
 					  <input type="number" className="form-control" onChange={this.handleInputChange} name="electricTubesPrice" id="electricTubesPrice" aria-describedby="Electric tubing price" placeholder="Enter electric tubing price" />
 					  
 					</div>
+					}
+					{ electricWiresReplace &&
 					<div className="form-group">
 					  <label htmlFor="wiresReplacePrice">Wires replacement price</label>
 					  <input type="number" className="form-control" onChange={this.handleInputChange} name="wiresReplacePrice" id="wiresReplacePrice" aria-describedby="Wires replacment price" placeholder="Enter wires replacment price" />
 					  
 					</div>
+					}
+					{ waterTubes &&
 					<div className="form-group">
 					  <label htmlFor="waterTubingPrice">Water tubing price</label>
 					  <input type="number" className="form-control" onChange={this.handleInputChange} name="waterTubingPrice" id="waterTubingPrice" aria-describedby="Water tubing price" placeholder="Enter water tubing price" />
 					  
 					</div>
+					}
 					<div className="form-group">
 					  <label htmlFor="floorMakingPrice">Floor making cost Sq.m</label>
 					  <input type="number" className="form-control" onChange={this.handleInputChange} name="floorMakingPrice" id="floorMakingPrice" aria-describedby="Floor making cost" placeholder="Enter floor making cost" />
-					  
+					 
 					</div>
+					{ wallCeramics && 
 					<div className="form-group">
-					  <label htmlFor="wallCeramicsWorkCost">Wall ceramics cost</label>
+					  <label htmlFor="wallCeramicsWorkCost">Wall ceramics mounting cost Sq.m</label>
 					  <input type="number" className="form-control" onChange={this.handleInputChange} name="wallCeramicsWorkCost" id="wallCeramicsWorkCost" aria-describedby="Wall ceramics cost" placeholder="Enter wall ceramics cost" />
 					  
 					</div>
+					}
+				</div>			
+				</div>			
+				<div className="col-xs-6 col-sm-4 col-md-2">
 					<button className="btn btn-success" onClick={this.handleSubmit} >Calculate</button>
-				<div>
-					<h4>Result</h4>
-					<p>Walls cost: {wallsPrice} </p>
-					<p>Ceiling painting cost: {ceilingPrice}</p>
-					<p>Floor making cost: {floorPrice}</p>
-					<p><strong>Total:  {totalPrice}</strong></p>
+				</div>		
+				<div className="col-xs-6 col-sm-4 col-md-2">
+					{ totalPrice &&
+					<div>
+						<h4>Result</h4>
+						<p>Walls cost: {wallsPrice} </p>
+						<p>Ceiling painting cost: {ceilingPrice}</p>
+						<p>Floor making cost: {floorPrice}</p>
+						<p><strong>Total:  {totalPrice}</strong></p>
+					</div>
+					}
 				</div>
+			</div>
 			</div>
 				);
 	}
