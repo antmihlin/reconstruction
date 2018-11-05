@@ -7,7 +7,8 @@ class Room extends React.Component {
 		
 		this.state = {
 			//Room params
-			roomTitle:null,
+			roomTitle:'Unnamed room',
+			collapsed:true,
 			roomType:null,
 			width:null,
 			length:null,
@@ -135,9 +136,20 @@ class Room extends React.Component {
 		totalPrice += this.state.floorPrice;
 		
 		this.setState({ totalPrice:totalPrice });
-	}	
+		this.totalToParent();
+	}
+	
+	totalToParent = ()=>{
+		this.props.callBackFromParent('Some good data');
+	};
+	
+	collapse(){
+		this.setState({collapsed: !this.state.collapsed});
+	}
 
 	render() {
+			const collapsed = this.state.collapsed;
+			const roomTitle = this.state.roomTitle;
 			const wallCeramics = this.state.wallCeramics;
 			const waterTubes = this.state.waterTubes;
 			const electricTubes = this.state.electricTubes;
@@ -150,6 +162,11 @@ class Room extends React.Component {
 		
 		return(
 			<div className="container-fluid">
+			<h4>Room: {roomTitle}</h4>
+			
+			<button className="btn btn-secondary" onClick={()=> this.collapse() } > Toggle </button>
+			
+			{ !collapsed &&
 			<div className="row">
 			<div className="col-xs-12 col-sm-6 col-md-4">
 			<div className="section_cyan">
@@ -170,17 +187,17 @@ class Room extends React.Component {
 					</div>
 					<div className="form-group">
 					  <label htmlFor="width">Width</label>
-					  <input type="number" className="form-control" onChange={this.handleInputChange} name="width" id="width" aria-describedby="Width" placeholder="Enter width" />
+					  <input type="number" className="form-control" value="10" onChange={this.handleInputChange} name="width" id="width" aria-describedby="Width" placeholder="Enter width" />
 					  
 					</div>
 					<div className="form-group">
 					  <label htmlFor="length">Length</label>
-					  <input type="number" className="form-control" onChange={this.handleInputChange} name="length" id="length" aria-describedby="Length" placeholder="Enter length" />
+					  <input type="number" className="form-control" value="8" onChange={this.handleInputChange} name="length" id="length" aria-describedby="Length" placeholder="Enter length" />
 					  
 					</div>
 					<div className="form-group">
 					  <label htmlFor="height">Height</label>
-					  <input type="number" className="form-control" onChange={this.handleInputChange} name="height" id="height" aria-describedby="Height" placeholder="Enter height" />
+					  <input type="number" className="form-control" value="3" onChange={this.handleInputChange} name="height" id="height" aria-describedby="Height" placeholder="Enter height" />
 					  
 					</div>
 
@@ -228,27 +245,27 @@ class Room extends React.Component {
 				
 					<div className="form-group">
 					  <label htmlFor="wallPaintPrice">Wall paint price Sq.m</label>
-					  <input type="number" className="form-control" onChange={this.handleInputChange} name="wallPaintPrice" id="wallPaintPrice" aria-describedby="Wall paint price" placeholder="Enter wall paint price" />
+					  <input type="number" className="form-control" value="5" onChange={this.handleInputChange} name="wallPaintPrice" id="wallPaintPrice" aria-describedby="Wall paint price" placeholder="Enter wall paint price" />
 					  
 					</div>
 
 					<div className="form-group">
 					  <label htmlFor="ceilingPaintPrice">Ceiling paint Sq.m</label>
-					  <input type="number" className="form-control" onChange={this.handleInputChange} name="ceilingPaintPrice" id="ceilingPaintPrice" aria-describedby="Ceiling paint price" placeholder="Enter ceiling paint price" />
+					  <input type="number" className="form-control" value="4" onChange={this.handleInputChange} name="ceilingPaintPrice" id="ceilingPaintPrice" aria-describedby="Ceiling paint price" placeholder="Enter ceiling paint price" />
 					  
 				
 					</div>
 					
 					<div className="form-group">
 					  <label htmlFor="floorMaterialPrice">Floor material cost Sq.m</label>
-					  <input type="number" className="form-control" onChange={this.handleInputChange} name="floorMaterialPrice" id="floorMaterialPrice" aria-describedby="Floor material price" placeholder="Enter floor material price" />
+					  <input type="number" className="form-control" value="25" onChange={this.handleInputChange} name="floorMaterialPrice" id="floorMaterialPrice" aria-describedby="Floor material price" placeholder="Enter floor material price" />
 					  
 					</div>
 					
 					{ wallCeramics &&
 					<div className="form-group">
 					  <label htmlFor="wallCeramicsPrice">Wall ceramics price Sq.m</label>
-					  <input type="number" className="form-control" onChange={this.handleInputChange} name="wallCeramicsPrice" id="wallCeramicsPrice" aria-describedby="Wall ceramics price" placeholder="Enter wall ceramics price" />
+					  <input type="number" className="form-control" value="8" onChange={this.handleInputChange} name="wallCeramicsPrice" id="wallCeramicsPrice" aria-describedby="Wall ceramics price" placeholder="Enter wall ceramics price" />
 					  
 					</div>
 					}
@@ -260,50 +277,50 @@ class Room extends React.Component {
 					<h4>Work costs</h4>
 					<div className="form-group">
 					  <label htmlFor="paintingPrice">Painting price Sq.m</label>
-					  <input type="number" className="form-control" onChange={this.handleInputChange} name="paintingPrice" id="paintingPrice" aria-describedby="Painting price" placeholder="Enter  painting price" />
+					  <input type="number" className="form-control" value="10" onChange={this.handleInputChange} name="paintingPrice" id="paintingPrice" aria-describedby="Painting price" placeholder="Enter  painting price" />
 					  
 					</div>
 
 					<div className="form-group">
 					  <label htmlFor="stuccoPrice">Stucco price Sq.m</label>
-					  <input type="number" className="form-control" onChange={this.handleInputChange} name="stuccoPrice" id="stuccoPrice" aria-describedby="Stucco price" placeholder="Enter stucco price" />
+					  <input type="number" className="form-control" value="4" onChange={this.handleInputChange} name="stuccoPrice" id="stuccoPrice" aria-describedby="Stucco price" placeholder="Enter stucco price" />
 					  
 					</div>
 					<div className="form-group">
 					  <label htmlFor="plasterPrice">Plaster price Sq.m</label>
-					  <input type="number" className="form-control" onChange={this.handleInputChange} name="plasterPrice" id="plasterPrice" aria-describedby="Plaster price" placeholder="Enter plaster price" />
+					  <input type="number" className="form-control" value="6" onChange={this.handleInputChange} name="plasterPrice" id="plasterPrice" aria-describedby="Plaster price" placeholder="Enter plaster price" />
 					  
 					</div>
 					{ electricTubes &&
 					<div className="form-group">
 					  <label htmlFor="electricTubesPrice">Electric tubing price</label>
-					  <input type="number" className="form-control" onChange={this.handleInputChange} name="electricTubesPrice" id="electricTubesPrice" aria-describedby="Electric tubing price" placeholder="Enter electric tubing price" />
+					  <input type="number" className="form-control" value="100" onChange={this.handleInputChange} name="electricTubesPrice" id="electricTubesPrice" aria-describedby="Electric tubing price" placeholder="Enter electric tubing price" />
 					  
 					</div>
 					}
 					{ electricWiresReplace &&
 					<div className="form-group">
 					  <label htmlFor="wiresReplacePrice">Wires replacement price</label>
-					  <input type="number" className="form-control" onChange={this.handleInputChange} name="wiresReplacePrice" id="wiresReplacePrice" aria-describedby="Wires replacment price" placeholder="Enter wires replacment price" />
+					  <input type="number" className="form-control" value="200" onChange={this.handleInputChange} name="wiresReplacePrice" id="wiresReplacePrice" aria-describedby="Wires replacment price" placeholder="Enter wires replacment price" />
 					  
 					</div>
 					}
 					{ waterTubes &&
 					<div className="form-group">
 					  <label htmlFor="waterTubingPrice">Water tubing price</label>
-					  <input type="number" className="form-control" onChange={this.handleInputChange} name="waterTubingPrice" id="waterTubingPrice" aria-describedby="Water tubing price" placeholder="Enter water tubing price" />
+					  <input type="number" className="form-control" value="500" onChange={this.handleInputChange} name="waterTubingPrice" id="waterTubingPrice" aria-describedby="Water tubing price" placeholder="Enter water tubing price" />
 					  
 					</div>
 					}
 					<div className="form-group">
 					  <label htmlFor="floorMakingPrice">Floor making cost Sq.m</label>
-					  <input type="number" className="form-control" onChange={this.handleInputChange} name="floorMakingPrice" id="floorMakingPrice" aria-describedby="Floor making cost" placeholder="Enter floor making cost" />
+					  <input type="number" className="form-control" value="25" onChange={this.handleInputChange} name="floorMakingPrice" id="floorMakingPrice" aria-describedby="Floor making cost" placeholder="Enter floor making cost" />
 					 
 					</div>
 					{ wallCeramics && 
 					<div className="form-group">
 					  <label htmlFor="wallCeramicsWorkCost">Wall ceramics mounting cost Sq.m</label>
-					  <input type="number" className="form-control" onChange={this.handleInputChange} name="wallCeramicsWorkCost" id="wallCeramicsWorkCost" aria-describedby="Wall ceramics cost" placeholder="Enter wall ceramics cost" />
+					  <input type="number" className="form-control" value="20" onChange={this.handleInputChange} name="wallCeramicsWorkCost" id="wallCeramicsWorkCost" aria-describedby="Wall ceramics cost" placeholder="Enter wall ceramics cost" />
 					  
 					</div>
 					}
@@ -324,6 +341,7 @@ class Room extends React.Component {
 					}
 				</div>
 			</div>
+			}
 			</div>
 				);
 	}
