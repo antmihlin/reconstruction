@@ -3,11 +3,12 @@ import { Route, Link } from 'react-router-dom'
 import Home from './home/home';
 import Calculator from './calculator/calculator';
 
+import Header from '../layout/header';
+
 const App = ()=>(
   <div>
     <header>
-      <Link to="/">Home</Link>
-      <Link to="/calculator">Calculator</Link>
+      <Header />
     </header>
 
     <main>
