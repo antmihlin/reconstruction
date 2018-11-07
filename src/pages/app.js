@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route, Link } from 'react-router-dom'
+import { Route } from 'react-router-dom'
 import Home from './home/home';
 import Calculator from './calculator/calculator';
 
@@ -19,4 +19,3 @@ const App = ()=>(
 );
 
 export default App;
-

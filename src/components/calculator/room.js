@@ -150,27 +150,22 @@ class Room extends React.Component {
 		this.setState({collapsed: !this.state.collapsed});
 	}
 
-	render() {
-			
-			const collapsed = this.state.collapsed;
-			const roomTitle = this.state.roomTitle;
-			const wallCeramics = this.state.wallCeramics;
-			const waterTubes = this.state.waterTubes;
-			const electricTubes = this.state.electricTubes;
-			const electricWiresReplace = this.state.electricWiresReplace;
-		
-			const wallsPrice = this.state.wallsPrice;
-			const ceilingPrice =  this.state.ceilingPrice;
-			const floorPrice =  this.state.floorPrice;
-			const totalPrice =  this.state.totalPrice;		
+	render() {	
 		
 		return(
 			<div>
-			<h4 >Room: {roomTitle}</h4>
+			<h4 >Room: {this.state.roomTitle}</h4>
 			
-			<button className="btn btn-secondary" onClick={()=> this.collapse() } > Toggle </button>
+			<button className="btn btn-secondary" onClick={()=> this.collapse() } >
+				{!this.state.collapsed &&
+					<span>Collapse</span>
+				} 
+				{this.state.collapsed &&
+					<span>Expand</span>
+				} 
+			</button>
 			
-			{ !collapsed &&
+			{ !this.state.collapsed &&
 			<div className="row">
 			<div className="col-xs-12 col-sm-6 col-md-4">
 			<div className="section_cyan">
@@ -266,7 +261,7 @@ class Room extends React.Component {
 					  
 					</div>
 					
-					{ wallCeramics &&
+					{ this.state.wallCeramics &&
 					<div className="form-group">
 					  <label htmlFor="wallCeramicsPrice">Wall ceramics price Sq.m</label>
 					  <input type="number" className="form-control" onChange={this.handleInputChange} name="wallCeramicsPrice" id="wallCeramicsPrice" aria-describedby="Wall ceramics price" placeholder="Enter wall ceramics price" />
@@ -295,21 +290,21 @@ class Room extends React.Component {
 					  <input type="number" className="form-control"  onChange={this.handleInputChange} name="plasterPrice" id="plasterPrice" aria-describedby="Plaster price" placeholder="Enter plaster price" />
 					  
 					</div>
-					{ electricTubes &&
+					{ this.state.electricTubes &&
 					<div className="form-group">
 					  <label htmlFor="electricTubesPrice">Electric tubing price</label>
 					  <input type="number" className="form-control"  onChange={this.handleInputChange} name="electricTubesPrice" id="electricTubesPrice" aria-describedby="Electric tubing price" placeholder="Enter electric tubing price" />
 					  
 					</div>
 					}
-					{ electricWiresReplace &&
+					{ this.state.electricWiresReplace &&
 					<div className="form-group">
 					  <label htmlFor="wiresReplacePrice">Wires replacement price</label>
 					  <input type="number" className="form-control"  onChange={this.handleInputChange} name="wiresReplacePrice" id="wiresReplacePrice" aria-describedby="Wires replacment price" placeholder="Enter wires replacment price" />
 					  
 					</div>
 					}
-					{ waterTubes &&
+					{ this.state.waterTubes &&
 					<div className="form-group">
 					  <label htmlFor="waterTubingPrice">Water tubing price</label>
 					  <input type="number" className="form-control"  onChange={this.handleInputChange} name="waterTubingPrice" id="waterTubingPrice" aria-describedby="Water tubing price" placeholder="Enter water tubing price" />
@@ -321,7 +316,7 @@ class Room extends React.Component {
 					  <input type="number" className="form-control"  onChange={this.handleInputChange} name="floorMakingPrice" id="floorMakingPrice" aria-describedby="Floor making cost" placeholder="Enter floor making cost" />
 					 
 					</div>
-					{ wallCeramics && 
+					{ this.state.wallCeramics && 
 					<div className="form-group">
 					  <label htmlFor="wallCeramicsWorkCost">Wall ceramics mounting cost Sq.m</label>
 					  <input type="number" className="form-control"  onChange={this.handleInputChange} name="wallCeramicsWorkCost" id="wallCeramicsWorkCost" aria-describedby="Wall ceramics cost" placeholder="Enter wall ceramics cost" />
@@ -334,13 +329,13 @@ class Room extends React.Component {
 					<button className="btn btn-success" onClick={this.handleSubmit} >Calculate</button>
 				</div>		
 				<div className="col-xs-6 col-sm-4 col-md-2">
-					{ totalPrice &&
+					{ this.state.totalPrice &&
 					<div>
 						<h4>Result</h4>
-						<p>Walls cost: {wallsPrice} </p>
-						<p>Ceiling painting cost: {ceilingPrice}</p>
-						<p>Floor making cost: {floorPrice}</p>
-						<p><strong>Total:  {totalPrice}</strong></p>
+						<p>Walls cost: {this.state.wallsPrice} </p>
+						<p>Ceiling painting cost: {this.state.ceilingPrice}</p>
+						<p>Floor making cost: {this.state.floorPrice}</p>
+						<p><strong>Total:  {this.state.totalPrice}</strong></p>
 					</div>
 					}
 				</div>
