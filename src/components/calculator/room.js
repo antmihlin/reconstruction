@@ -67,10 +67,13 @@ class Room extends React.Component {
 		const wallsArea = this.calcWallsArea(this.state.height, this.state.length, this.state.width);
 		
 		this.setState({ wallsArea:wallsArea , roomArea:roomArea },function(){
-			this.calcWallsPrice();
-			this.calcCeilingPrice();
-			this.calcFloorPrice();
-			setTimeout( ()=> this.calcRoomTotalPrice(), 2000 );
+			this.calcWallsPrice( ()=>{
+				this.calcCeilingPrice(()=>{
+					this.calcFloorPrice(()=>{
+						this.calcRoomTotalPrice();
+					});
+				});
+			} );
 		});
 		
 	}
@@ -98,7 +101,7 @@ class Room extends React.Component {
 	}
 	
 	//Calculate walls making price
-	calcWallsPrice(  ){
+	calcWallsPrice( cb ){
 		
 		let stucco = null;
 		let plaster = null;
@@ -115,19 +118,19 @@ class Room extends React.Component {
 			price += this.state.roomArea * this.state.wallCeramicsWorkCost + this.state.wallCeramicsPrice *this.state.roomArea;
 		}
 		
-		this.setState({ wallsPrice: price });
+		this.setState({ wallsPrice: price },cb);
 	}
 	
 	//Calculate ceiling painting cost
-	calcCeilingPrice(){
+	calcCeilingPrice( cb ){
 		const price = this.calcAreaPaintingPrice( this.state.roomArea, this.state.paintingPrice, this.state.ceilingPaintPrice );
-		 this.setState({ ceilingPrice: price });
+		 this.setState({ ceilingPrice: price },cb);
 	}
 	
 	//Calculate floor making cost
-	calcFloorPrice(){
+	calcFloorPrice(cb){
 		const floorPrice = this.state.floorMakingPrice * this.state.roomArea + this.state.floorMaterialPrice * this.state.roomArea;
-		this.setState({ floorPrice :floorPrice });
+		this.setState({ floorPrice :floorPrice },cb);
 	}
 	
 	calcRoomTotalPrice(){
